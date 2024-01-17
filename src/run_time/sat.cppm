@@ -98,7 +98,6 @@ public:
     }
 
     auto calc(const table_type& data) const {
-        // return std::ranges::any_of(
         bool res = false;
 
         for (auto&& lit : m_literals) {

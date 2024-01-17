@@ -1,10 +1,7 @@
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set_target_properties(sat_solver PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-    "${PROJECT_BINARY_DIR}/bin/")
-
-set(TESTLIST sat_runtime)
+set(TESTLIST sat_runtime sat_compiletime)
 
 if(BUILD_TESTS)
     find_package(GTest REQUIRED)
@@ -13,7 +10,7 @@ if(BUILD_TESTS)
     foreach(TARGET ${TESTLIST})
         add_executable(${TARGET}_test ${TARGET}.cc)
 
-        target_link_libraries(${TARGET}_test PRIVATE sat_runtime_lib)
+        target_link_libraries(${TARGET}_test PRIVATE ${TARGET}_lib)
         target_link_libraries(${TARGET}_test PRIVATE gtest_main
             gtest
         )
