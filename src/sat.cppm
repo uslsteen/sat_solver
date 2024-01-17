@@ -10,6 +10,7 @@ module;
 #include <iterator>
 #include <numeric>
 #include <optional>
+#include <ranges>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -41,7 +42,7 @@ std::string join_str(InputIt first, InputIt last,
 }  // namespace detail
 
 //! NOTE: bijection of literal and his value
-using table_type = std::vector<bool>;  // std::unordered_map<int, bool>;
+using table_type = std::unordered_map<int, bool>;
 
 class Var final {
     int m_id = 0;
@@ -53,7 +54,7 @@ public:
     auto id() const noexcept { return std::abs(m_id); }
 
     auto calc(const table_type& data) const {
-        auto literal_val = data.at(m_id);
+        auto literal_val = data.at(id());
         return m_id > 0 ? literal_val : !literal_val;
     }
 
@@ -97,7 +98,8 @@ public:
     }
 
     auto calc(const table_type& data) const {
-        bool res = true;
+        // return std::ranges::any_of(
+        bool res = false;
 
         for (auto&& lit : m_literals) {
             res |= lit.calc(data);
@@ -135,9 +137,10 @@ public:
     ConjNormalForm(const std::vector<Clause>& clauses) : m_clauses{clauses} {}
 
     auto calc(const table_type& data) const {
+        //! NOTE: maybe ranges::any_of
         bool res = true;
 
-        for (auto&& clause : m_clauses) {
+        for (const auto& clause : m_clauses) {
             res &= clause.calc(data);
         }
 
@@ -167,20 +170,18 @@ export class SAT final {
     ConjNormalForm m_cnf{};
     std::unordered_set<Var> m_vars{};
     table_type m_sol{};
-    bool is_sat = true;
+    bool m_is_sat = true;
 
 public:
     SAT() = default;
     SAT(const std::vector<Clause>& clauses) : m_cnf{clauses} {
-        //
         set_vars(clauses);
-        m_sol.resize(m_vars.size());
     }
 
     std::optional<table_type> try_solve() noexcept {
         if (solve_step(m_vars.begin(), m_vars.end())) return m_sol;
         //
-        is_sat = false;
+        m_is_sat = false;
         return std::nullopt;
     }
 
@@ -189,25 +190,25 @@ public:
 
         os << "Problem is ";
 
-        if (!is_sat)
+        if (!m_is_sat)
             os << "unsatisfiable";
         else {
-            os << "satisfable";
+            os << "satisfable\n";
             os << "The possible solution is:\n";
 
-            for (std::size_t i = 0; i < m_sol.size(); ++i)
-                os << "x" << i + 1 << "=" << static_cast<int>(m_sol.at(i)) << std::endl;
+            for (auto&& it : m_sol)
+                std::cout << "x" << it.first << " = " << it.second << std::endl;
         }
     }
 
     bool calc(const table_type& data) {
+        //! NOTE: maybe ranges::all_of
         bool res = true;
-
-        for (auto&& clause : m_cnf)
-            res &= clause.calc(data);
-    
+        for (const auto& clause : m_cnf) res &= clause.calc(data);
         return res;
     }
+
+    bool is_sat() { return m_is_sat; }
 
 private:
     void set_vars(const std::vector<Clause>& clauses) noexcept {
@@ -219,13 +220,13 @@ private:
     bool solve_step(InputIt cur, InputIt last) {
         if (cur == last) return calc(m_sol);
 
+        auto& val = m_sol[(*cur).id()];
         auto next = std::next(cur);
 
-        m_sol[(*cur).id()] = true;
-        if (solve_step(next, last))
-            return true;
+        val = true;
+        if (solve_step(next, last)) return true;
 
-        m_sol[(*cur).id()] = false;
+        val = false;
         return solve_step(next, last);
     }
 };
