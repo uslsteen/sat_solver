@@ -26,11 +26,12 @@ class SAT final {
 public:
     using var_type = int;
     using clause_type = std::tuple<int, int, int>;
+    using table_type = std::array<var_type, VarNum>;
     //
 public:
     constexpr SAT() = default;
     //
-    consteval bool calc(const std::array<var_type, VarNum>& vars,
+    consteval bool calc(const table_type& vars,
                         const std::array<clause_type, ClauseNum>& clauses) {
         for (const auto& clause : clauses) {
             var_type x1 = std::get<0>(clause);
@@ -53,8 +54,8 @@ public:
 
     //
     template <int var_id>
-    consteval std::optional<std::array<var_type, VarNum>> solve_iter(
-        const std::array<var_type, VarNum>& vars,
+    consteval std::optional<table_type> solve_iter(
+        const table_type& vars,
         const std::array<clause_type, ClauseNum>& clauses) {
         const bool res = calc(vars, clauses);
         //
@@ -78,9 +79,9 @@ public:
     }
 
     //
-    consteval std::optional<std::array<var_type, VarNum>> try_solve(
+    consteval std::optional<table_type> try_solve(
         const std::array<clause_type, ClauseNum>& clauses) {
-        std::array<var_type, VarNum> vars{};
+        table_type vars{};
         return solve_iter<0>(vars, clauses);
     }
 };
