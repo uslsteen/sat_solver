@@ -127,7 +127,6 @@ auto& operator<<(std::ostream& os, const Clause& obj) {
     return os;
 }
 
-// export class ConjNormalForm final {
 class ConjNormalForm final {
     //
     std::vector<Clause> m_clauses{};
@@ -137,7 +136,6 @@ public:
     ConjNormalForm(const std::vector<Clause>& clauses) : m_clauses{clauses} {}
 
     auto calc(const table_type& data) const {
-        //! NOTE: maybe ranges::any_of
         bool res = true;
 
         for (const auto& clause : m_clauses) {
@@ -202,7 +200,6 @@ public:
     }
 
     bool calc(const table_type& data) {
-        //! NOTE: maybe ranges::all_of
         bool res = true;
         for (const auto& clause : m_cnf) res &= clause.calc(data);
         return res;
