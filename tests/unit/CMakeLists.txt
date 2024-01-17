@@ -1,9 +1,6 @@
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set_target_properties(sat_solver PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-    "${PROJECT_BINARY_DIR}/bin/")
-
 set(TESTLIST sat_runtime)
 
 if(BUILD_TESTS)
