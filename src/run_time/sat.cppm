@@ -17,7 +17,7 @@ module;
 #include <unordered_set>
 #include <vector>
 
-export module sat;
+export module sat_runtime;
 
 namespace sat {
 

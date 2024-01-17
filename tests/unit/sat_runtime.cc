@@ -1,4 +1,4 @@
-import sat;
+import sat_runtime;
 
 #include <gtest/gtest.h>
 
