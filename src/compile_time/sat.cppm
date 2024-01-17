@@ -65,11 +65,13 @@ public:
         else {
             auto cur_vars = vars;
             //
-            cur_vars[var_id] = 0;
-            if (solve_iter<var_id + 1>(cur_vars, clauses)) return cur_vars;
-            //
             cur_vars[var_id] = 1;
-            if (solve_iter<var_id + 1>(cur_vars, clauses)) return cur_vars;
+            const auto true_flow = solve_iter<var_id + 1>(cur_vars, clauses);
+            if (true_flow.has_value()) return true_flow;
+            //
+            cur_vars[var_id] = 0;
+            const auto false_flow = solve_iter<var_id + 1>(cur_vars, clauses);
+            if (false_flow.has_value()) return false_flow;
         }
         //
         return std::nullopt;
