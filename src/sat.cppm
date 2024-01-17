@@ -41,7 +41,7 @@ std::string join_str(InputIt first, InputIt last,
 }  // namespace detail
 
 //! NOTE: bijection of literal and his value
-using table_type = std::unordered_map<int, bool>;
+using table_type = std::vector<bool>;  // std::unordered_map<int, bool>;
 
 class Var final {
     int m_id = 0;
@@ -52,7 +52,7 @@ public:
 
     auto id() const noexcept { return std::abs(m_id); }
 
-    auto calc(const table_type& data) const noexcept {
+    auto calc(const table_type& data) const {
         auto literal_val = data.at(m_id);
         return m_id > 0 ? literal_val : !literal_val;
     }
@@ -68,6 +68,8 @@ auto& operator<<(std::ostream& os, const Var& obj) {
     obj.dump(os);
     return os;
 }
+
+auto operator==(const Var& lhs, const Var& rhs) { return lhs.id() == rhs.id(); }
 }  // namespace sat
 
 namespace std {
@@ -94,7 +96,7 @@ public:
                       "Every clause should have 3 literals");
     }
 
-    auto calc(const table_type& data) {
+    auto calc(const table_type& data) const {
         bool res = true;
 
         for (auto&& lit : m_literals) {
@@ -132,7 +134,7 @@ public:
     ConjNormalForm() = default;
     ConjNormalForm(const std::vector<Clause>& clauses) : m_clauses{clauses} {}
 
-    auto calc(const table_type& data) {
+    auto calc(const table_type& data) const {
         bool res = true;
 
         for (auto&& clause : m_clauses) {
@@ -141,6 +143,13 @@ public:
 
         return res;
     }
+
+    // Iterators
+    auto begin() const noexcept { return m_clauses.begin(); }
+    auto begin() noexcept { return m_clauses.begin(); }
+
+    auto end() const noexcept { return m_clauses.end(); }
+    auto end() noexcept { return m_clauses.end(); }
 
     void dump(std::ostream& os) const {
         os << detail::join_str<Clause>(m_clauses.begin(), m_clauses.end(),
@@ -157,23 +166,67 @@ export class SAT final {
     //
     ConjNormalForm m_cnf{};
     std::unordered_set<Var> m_vars{};
-    std::optional<table_type> m_sol{};
+    table_type m_sol{};
+    bool is_sat = true;
 
 public:
     SAT() = default;
-    SAT(std::vector<Clause> inp) : m_cnf{inp} {}
+    SAT(const std::vector<Clause>& clauses) : m_cnf{clauses} {
+        //
+        set_vars(clauses);
+        m_sol.resize(m_vars.size());
+    }
 
-    void try_solve() const {}
+    std::optional<table_type> try_solve() noexcept {
+        if (solve_step(m_vars.begin(), m_vars.end())) return m_sol;
+        //
+        is_sat = false;
+        return std::nullopt;
+    }
 
     void dump(std::ostream& os) {
         os << m_cnf << std::endl;
 
         os << "Problem is ";
 
-        if (m_sol == std::nullopt)
+        if (!is_sat)
             os << "unsatisfiable";
-        else
+        else {
             os << "satisfable";
+            os << "The possible solution is:\n";
+
+            for (std::size_t i = 0; i < m_sol.size(); ++i)
+                os << "x" << i + 1 << "=" << static_cast<int>(m_sol.at(i)) << std::endl;
+        }
+    }
+
+    bool calc(const table_type& data) {
+        bool res = true;
+
+        for (auto&& clause : m_cnf)
+            res &= clause.calc(data);
+    
+        return res;
+    }
+
+private:
+    void set_vars(const std::vector<Clause>& clauses) noexcept {
+        for (auto&& clause : clauses)
+            for (auto&& var : clause) m_vars.insert(var.id());
+    }
+
+    template <typename InputIt>
+    bool solve_step(InputIt cur, InputIt last) {
+        if (cur == last) return calc(m_sol);
+
+        auto next = std::next(cur);
+
+        m_sol[(*cur).id()] = true;
+        if (solve_step(next, last))
+            return true;
+
+        m_sol[(*cur).id()] = false;
+        return solve_step(next, last);
     }
 };
 
