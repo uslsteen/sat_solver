@@ -36,17 +36,23 @@ In Russian:
 
 - [Modules CMake tutorial without CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API variable](https://www.kitware.com/import-cmake-the-experiment-is-over/)
 
-From the root of the sources tree:
-
+* Configure CMake from the root of the sources tree:
 ```bash
 mkdir build/
 
-CXX=<path/to/clang++-17> CC=<path/to/clang-17> <path/to/cmake-3.28> -GNinja -DCMAKE_MAKE_PROGRAM=<path/to/ninja> -S . -B build/
+CXX=<path/to/clang++-17> CC=<path/to/clang-17> <path/to/cmake-3.28> -B build/ \
+                                               -GNinja \
+                                               -DCMAKE_MAKE_PROGRAM=<path/to/ninja>\
+                                               -S . \
+                                               -DCMAKE_BUILD_TYPE=Release \
+                                               -DBUILD_TESTS=ON
 ```
+
+* Run build:
 
 ```bash
 cd build/
-<path/to/cmake-3.28> --build .
+<path/to/cmake-3.28> --build build/ --config Release -j ${JOBS}
 ```
 
 Additionally suggest set varialbe ```CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS```
