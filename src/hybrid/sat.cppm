@@ -17,7 +17,7 @@ module;
 #include <unordered_set>
 #include <vector>
 
-export module sat_runtime;
+export module sat_hybrid;
 
 namespace sat {
 
@@ -42,19 +42,26 @@ std::string join_str(InputIt first, InputIt last,
 }  // namespace detail
 
 //! NOTE: bijection of literal and his value
-using table_type = std::unordered_map<int, bool>;
+template <std::semiregular T, int TableSize>
+using table_type = std::array<T, TableSize>;
 
 class Var final {
-    int m_id = 0;
+public:
+    using data_type = int;
+
+private:
+    data_type m_id = 0;
 
 public:
-    Var() = default;
-    Var(int id) : m_id(id) {}
+    constexpr Var() = default;
+    constexpr Var(int id) : m_id(id) {}
 
     auto id() const noexcept { return std::abs(m_id); }
+    auto val() const noexcept { return m_id; }
 
-    auto calc(const table_type& data) const {
-        auto literal_val = data.at(id());
+    template <int VarNum>
+    auto calc(const table_type<int, VarNum>& data) const {
+        auto literal_val = data.at(id() - 1);
         return m_id > 0 ? literal_val : !literal_val;
     }
 
@@ -70,39 +77,29 @@ auto& operator<<(std::ostream& os, const Var& obj) {
     return os;
 }
 
-auto operator==(const Var& lhs, const Var& rhs) { return lhs.id() == rhs.id(); }
 }  // namespace sat
-
-namespace std {
-template <>
-struct hash<sat::Var> {
-    size_t operator()(const sat::Var& obj) const {
-        return hash<int>()(obj.id());
-    }
-};
-}  // namespace std
 
 namespace sat {
 
-class Clause final {
+export class Clause final {
     static constexpr int m_size = 3;
     std::array<Var, m_size> m_literals{};
 
 public:
-    Clause(const std::array<Var, m_size>& literals) : m_literals{literals} {}
+    constexpr Clause(const std::array<Var, m_size>& literals)
+        : m_literals{literals} {}
 
     template <typename... Args>
-    Clause(Args&&... args) : m_literals{std::forward<Args>(args)...} {
+    constexpr Clause(Args&&... args) : m_literals{std::forward<Args>(args)...} {
         static_assert(sizeof...(args) == 3,
                       "Every clause should have 3 literals");
     }
 
-    auto calc(const table_type& data) const {
+    template <int VarNum>
+    auto calc(const table_type<int, VarNum>& data) const {
         bool res = false;
 
-        for (auto&& lit : m_literals) {
-            res |= lit.calc(data);
-        }
+        for (auto&& lit : m_literals) res |= lit.calc<VarNum>(data);
 
         return res;
     }
@@ -126,19 +123,22 @@ auto& operator<<(std::ostream& os, const Clause& obj) {
     return os;
 }
 
+template <int ClauseNum>
 class ConjNormalForm final {
     //
-    std::vector<Clause> m_clauses{};
+    std::array<Clause, ClauseNum> m_clauses{};
 
 public:
-    ConjNormalForm() = default;
-    ConjNormalForm(const std::vector<Clause>& clauses) : m_clauses{clauses} {}
+    constexpr ConjNormalForm(const std::array<Clause, ClauseNum>& clauses)
+        : m_clauses{clauses} {}
 
-    auto calc(const table_type& data) const {
+    //
+    template <int VarNum>
+    auto calc(const std::array<int, VarNum>& data) const {
         bool res = true;
 
         for (const auto& clause : m_clauses) {
-            res &= clause.calc(data);
+            res &= clause.calc<VarNum>(data);
         }
 
         return res;
@@ -157,29 +157,23 @@ public:
     }
 };
 
-auto& operator<<(std::ostream& os, const ConjNormalForm& obj) {
-    obj.dump(os);
-    return os;
-}
-
-export class SAT final {
+export template <int ClauseNum, int VarNum>
+class SAT final {
+    //
 public:
-    using SolutionTy = table_type;
+    using SolutionTy = table_type<int, VarNum>;
 
 private:
-    ConjNormalForm m_cnf{};
-    std::unordered_set<Var> m_vars{};
-    SolutionTy m_sol{};
+    ConjNormalForm<ClauseNum> m_cnf{};
     bool m_is_sat = true;
 
 public:
-    SAT() = default;
-    SAT(const std::vector<Clause>& clauses) : m_cnf{clauses} {
-        set_vars(clauses);
-    }
+    constexpr SAT(const std::array<Clause, ClauseNum>& clauses)
+        : m_cnf{clauses} {}
 
-    std::optional<SolutionTy> try_solve() noexcept {
-        if (solve_step(m_vars.begin(), m_vars.end())) return m_sol;
+    std::optional<SolutionTy> try_solve(const SolutionTy& reference = {}) noexcept {
+        SolutionTy solution = reference;
+        if (solve_step(solution)) return solution;
         //
         m_is_sat = false;
         return std::nullopt;
@@ -187,45 +181,35 @@ public:
 
     void dump(std::ostream& os) {
         os << m_cnf << std::endl;
-
         os << "Problem is ";
-
         if (!m_is_sat)
             os << "unsatisfiable";
         else {
             os << "satisfable\n";
             os << "The possible solution is:\n";
-
-            for (auto&& it : m_sol)
-                std::cout << "x" << it.first << " = " << it.second << std::endl;
         }
     }
 
+private:
+    //
     bool calc(const SolutionTy& data) {
         bool res = true;
-        for (const auto& clause : m_cnf) res &= clause.calc(data);
+        for (const auto& clause : m_cnf)
+            res &= clause.template calc<VarNum>(data);
         return res;
     }
 
-private:
-    void set_vars(const std::vector<Clause>& clauses) noexcept {
-        for (auto&& clause : clauses)
-            for (auto&& var : clause) m_vars.insert(var.id());
-    }
+    //
+    bool solve_step(SolutionTy& solution, int id = 0) {
+        if (id == VarNum) return calc(solution);
 
-    template <typename InputIt>
-    bool solve_step(InputIt cur, InputIt last) {
-        if (cur == last) return calc(m_sol);
+        auto& val = solution[id];
 
-        auto& val = m_sol[(*cur).id()];
-        auto next = std::next(cur);
+        val = 1;
+        if (solve_step(solution, id + 1)) return true;
 
-        val = true;
-        if (solve_step(next, last)) return true;
-
-        val = false;
-        return solve_step(next, last);
+        val = 0;
+        return solve_step(solution, id + 1);
     }
 };
-
 }  // namespace sat

@@ -12,7 +12,8 @@ endif()
 project(module_example CXX)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 20)
+
+set(CMAKE_CXX_STANDARD 23)
 
 option(BUILD_TESTS "Build tests" OFF)
 option(ENABLE_WERROR "Enable -Werror option (CI)" OFF)

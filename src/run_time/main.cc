@@ -1,11 +1,16 @@
-import sat;
+import sat_runtime;
 
 #include <iostream>
 
 int main() {
     sat::SAT sat_solver{{{1, -2, -3}, {2, 3, -1}}};
-    sat_solver.try_solve();
+    const auto res = sat_solver.try_solve();
     //
-    sat_solver.dump(std::cout);
+    std::cout << "Problem is ";
+    if (res.has_value())
+        std::cout << "satisfable\n";
+    else
+        std::cout << "unsatisfable\n";
+
     return 0;
 }
