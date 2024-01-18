@@ -12,11 +12,11 @@ int main() {
         {{1, -2, -3}, {2, 3, -1}}};
     //
     sat::SAT<ClauseNum, VarsNum> sat{};
-    auto res = sat.try_solve(clauses);
+    const auto res = sat.try_solve(clauses);
 
     std::cout << "Problem is ";
-
-    if (res.has_value()) std::cout << "satisfable\n";
+    if (res.has_value())
+        std::cout << "satisfable\n";
     else
         std::cout << "unsatisfable\n";
-};
+}

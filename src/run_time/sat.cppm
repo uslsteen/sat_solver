@@ -163,10 +163,13 @@ auto& operator<<(std::ostream& os, const ConjNormalForm& obj) {
 }
 
 export class SAT final {
-    //
+public:
+    using SolutionTy = table_type;
+
+private:
     ConjNormalForm m_cnf{};
     std::unordered_set<Var> m_vars{};
-    table_type m_sol{};
+    SolutionTy m_sol{};
     bool m_is_sat = true;
 
 public:
@@ -175,7 +178,7 @@ public:
         set_vars(clauses);
     }
 
-    std::optional<table_type> try_solve() noexcept {
+    std::optional<SolutionTy> try_solve() noexcept {
         if (solve_step(m_vars.begin(), m_vars.end())) return m_sol;
         //
         m_is_sat = false;
@@ -198,13 +201,11 @@ public:
         }
     }
 
-    bool calc(const table_type& data) {
+    bool calc(const SolutionTy& data) {
         bool res = true;
         for (const auto& clause : m_cnf) res &= clause.calc(data);
         return res;
     }
-
-    bool is_sat() { return m_is_sat; }
 
 private:
     void set_vars(const std::vector<Clause>& clauses) noexcept {
