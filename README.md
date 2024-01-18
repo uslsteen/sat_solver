@@ -21,6 +21,19 @@ In Russian:
 
 Критерий сдачи: продемонстрировать что гибридное решение лучше чем оба чистых решения.
 
+## Task 1, Results
+
+In Russian:
+
+* Получен график зависимости времени исполнения/компиляции программы от размеров поданной CNF.
+
+![img](https://github.com/uslsteen/sat_solver/blob/main/pics/perfomance_stats.png)
+
+* Отметим, что при числе триплетов CNF $N> 70$ compile time реализация перестала собираться
+* Runtime и hybrid реализация собирались исполнялись за время, меньшеe 1 ms, при $N \leq 70$
+* Так же можно отметить runtime решения при $N = 125$ удивительно быстро нашлось для корректной 3-SAT (см. [логи исполнения тестов](https://github.com/uslsteen/sat_solver/blob/main/pics/runtime_tests_logs.png))
+* Несмотря на небольшой выбор набор тестов, видно, что hybrid реализация при $N > 70$ заметно быстрее runtime реализации.
+
 ## Build
 
 - [Modules CMake tutorial without CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API variable](https://www.kitware.com/import-cmake-the-experiment-is-over/)
