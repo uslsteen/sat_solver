@@ -1,3 +1,7 @@
+# NOTE: Force it to prevent building failure
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+
 add_library(sat_compile_time_lib STATIC sat.cppm)
 target_sources(sat_compile_time_lib
     PUBLIC FILE_SET

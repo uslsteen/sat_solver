@@ -1,12 +1,15 @@
+# NOTE: Force it to prevent building failure
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(GTest REQUIRED)
 
 set(TESTLIST sat_runtime 
              sat_compile_time
              sat_hybrid)
 
 if(BUILD_TESTS)
-    find_package(GTest REQUIRED)
     include(GoogleTest)
 
     foreach(TARGET ${TESTLIST})

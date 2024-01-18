@@ -14,6 +14,7 @@ project(module_example CXX)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
 option(BUILD_TESTS "Build tests" OFF)
 option(ENABLE_WERROR "Enable -Werror option (CI)" OFF)
