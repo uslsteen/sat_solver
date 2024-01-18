@@ -27,7 +27,41 @@ TEST(Naive, False) {
     EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample10) {
+TEST(CompileTimeGen, TrueExample5_2) {
+    constexpr int ClauseNum = 5;
+    constexpr int VarsNum = 2;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {-1, -2, 2},
+        {-1, 1, -1},
+        {2, 2, 1},
+        {-2, 1, -1},
+        {-2, 2, -1},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    constexpr auto res = sat.try_solve(clauses);
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(CompileTimeGen, FalseExample5_2) {
+    constexpr int ClauseNum = 5;
+    constexpr int VarsNum = 2;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {-2, 1, 1},
+        {-1, -2, -1},
+        {1, 2, 2},
+        {-1, 2, -1},
+        {1, 2, 1},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    constexpr auto res = sat.try_solve(clauses);
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(CompileTimeGen, TrueExample10) {
     constexpr int ClauseNum = 10;
     constexpr int VarsNum = 4;
 
@@ -50,7 +84,7 @@ TEST(GenTest, TrueExample10) {
     EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample10) {
+TEST(CompileTimeGen, FalseExample10) {
     constexpr int ClauseNum = 10;
     constexpr int VarsNum = 3;
 
@@ -73,7 +107,206 @@ TEST(GenTest, FalseExample10) {
     EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample50) {
+TEST(CompileTimeGen, TrueExample15) {
+    constexpr int ClauseNum = 15;
+    constexpr int VarsNum = 4;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {4, 2, 3},
+        {1, -1, 3},
+        {4, 3, -4},
+        {1, -3, -3},
+        {2, -3, 4},
+        {-4, 1, -2},
+        {2, -3, 4},
+        {4, 2, 4},
+        {2, -4, -2},
+        {3, -3, -2},
+        {4, -4, 1},
+        {-4, -1, 2},
+        {3, -2, -3},
+        {1, 4, 4},
+        {2, -2, 1},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(CompileTimeGen, FalseExample15) {
+    constexpr int ClauseNum = 15;
+    constexpr int VarsNum = 4;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {-3, -2, -3},
+        {-4, 4, -1},
+        {-4, 1, 3},
+        {-4, -1, 3},
+        {1, -3, -3},
+        {4, -4, 4},
+        {-2, -4, -3},
+        {3, 3, -2},
+        {4, -1, -1},
+        {3, 4, 2},
+        {-2, -4, -1},
+        {-3, 4, 3},
+        {2, -1, -1},
+        {-1, 3, 3},
+        {-3, -1, -4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(CompileTimeGen, TrueExample20) {
+    constexpr int ClauseNum = 20;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {3, 4, -4},   {-4, -2, 3}, {4, -2, 3},  {2, -2, -2}, {2, -5, -3},
+        {-5, -1, 5},  {-3, 3, -5}, {1, 2, 4},   {-5, 2, 1},  {-4, -1, 4},
+        {-4, -1, -2}, {1, 3, 2},   {-2, -1, 5}, {-3, 3, -5}, {-3, 3, 3},
+        {-3, 5, 4},   {-1, -4, 4}, {-2, -3, 5}, {-1, -5, 5}, {-1, -1, 4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(CompileTimeGen, FalseExample20) {
+    constexpr int ClauseNum = 20;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {2, -2, 1},   {-5, 3, 1},   {2, 4, 5},    {-1, 1, -4}, {-4, -4, -4},
+        {3, 3, -1},   {-1, -5, -5}, {4, 5, -1},   {-3, 5, 4},  {1, -2, -5},
+        {-3, -3, -5}, {-1, 1, 5},   {-4, -2, -5}, {3, 4, -2},  {-5, 1, 2},
+        {-5, 2, 1},   {2, -5, -4},  {-1, 3, 1},   {-2, 1, -2}, {-5, 5, -5},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(CompileTimeGen, TrueExample20_10) {
+    constexpr int ClauseNum = 20;
+    constexpr int VarsNum = 10;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {5, -5, -6}, {4, -2, -8},  {8, -3, -7},  {-5, 2, 3},  {-2, 5, -7},
+        {8, 5, -7},  {-2, -1, 2},  {-7, -5, -3}, {3, 9, -10}, {8, -10, 9},
+        {-3, 7, 7},  {-9, -9, -1}, {8, -8, 9},   {-4, 6, -7}, {-6, 5, -8},
+        {-6, -9, 3}, {9, 1, 6},    {-5, 10, -6}, {-8, 1, 8},  {-6, 8, 5},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    constexpr auto res = sat.try_solve(clauses);
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(CompileTimeGen, TrueExample25) {
+    constexpr int ClauseNum = 25;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {2, -4, 1},  {-2, 3, -2}, {-2, -3, 1}, {-2, -4, -1}, {-2, 3, -1},
+        {1, 2, -5},  {1, 4, -5},  {-4, 4, 1},  {3, -2, 1},   {-1, -3, 3},
+        {-2, -2, 2}, {-3, -3, 1}, {5, -4, -1}, {5, -5, -1},  {-4, -1, 4},
+        {-2, 4, 4},  {2, 5, 5},   {4, -2, -2}, {-3, 3, 5},   {-3, -2, 2},
+        {-4, 3, -4}, {3, -4, -4}, {-5, -4, 5}, {3, -3, -2},  {-5, -2, 2},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(CompileTimeGen, FalseExample25) {
+    constexpr int ClauseNum = 25;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {-2, -2, 5},  {-5, 5, 3},   {2, 2, -1}, {-2, 5, -1},  {1, 4, 4},
+        {3, -2, -2},  {-4, 4, 5},   {4, 5, 5},  {1, -1, -2},  {-2, -1, -1},
+        {-4, 4, -2},  {5, 2, -4},   {5, 1, 3},  {-3, -3, -4}, {-2, 4, 1},
+        {-3, -4, -5}, {-3, -2, -5}, {-2, 5, 5}, {-1, -1, 5},  {3, -1, -2},
+        {-3, 3, -3},  {-3, -5, 5},  {1, -2, 1}, {-5, -5, 3},  {-3, -4, -5},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(CompileTimeGen, TrueExample30) {
+    constexpr int ClauseNum = 30;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {-5, -3, -3}, {-3, -1, -4}, {-1, -2, -4}, {-3, 2, 5},  {-3, -3, -4},
+        {-3, -1, -4}, {-5, 5, -2},  {4, 2, 2},    {3, -4, 4},  {2, -3, -3},
+        {4, -3, -5},  {3, -1, 1},   {2, -1, -1},  {-5, 3, -5}, {1, -3, -1},
+        {1, 1, -5},   {5, -1, -4},  {1, 2, -3},   {-1, 4, 4},  {3, -2, 4},
+        {-4, -3, -4}, {3, -3, -4},  {-5, 4, -4},  {-5, 1, -3}, {3, -1, -3},
+        {-3, 2, 5},   {-1, 3, -2},  {4, -1, -5},  {4, 2, 2},   {3, -1, -4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(CompileTimeGen, FalseExample30) {
+    constexpr int ClauseNum = 30;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {-1, -4, 4}, {-2, 5, 5},   {3, -1, 5},   {1, -5, -4},  {1, 1, -5},
+        {1, -1, 2},  {1, 2, -2},   {-3, 2, -1},  {-1, 4, -3},  {3, 2, 1},
+        {3, -5, 5},  {-5, -2, 3},  {-4, -4, -5}, {-5, -3, 4},  {3, 2, -2},
+        {2, -2, 5},  {3, -2, 2},   {-2, 2, 5},   {-2, -4, -2}, {-5, 4, 4},
+        {5, 2, -5},  {-2, -1, -1}, {-2, -1, -3}, {1, -4, 2},   {-5, 4, -3},
+        {5, 5, -4},  {4, -4, 2},   {2, 5, -3},   {1, -2, 2},   {-1, 2, 4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    const auto res = sat.try_solve(clauses);
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(CompileTimeGen, TrueExample33_11) {
+    constexpr int ClauseNum = 33;
+    constexpr int VarsNum = 11;
+
+    constexpr std::array<std::tuple<int, int, int>, ClauseNum> clauses = {{
+        {8, 9, 10},    {-8, -9, 2},   {5, 7, 5},    {-5, 11, 1}, {-11, -1, -9},
+        {10, -11, 7},  {1, -1, -11},  {-7, -8, -6}, {9, 7, 3},   {-4, -4, -1},
+        {2, 6, 2},     {-1, -10, -3}, {-4, 11, -6}, {-5, 6, -3}, {7, 1, 4},
+        {-2, 11, -11}, {10, -7, 9},   {4, -10, -2}, {7, 2, 4},   {6, 8, -10},
+        {6, 9, 9},     {-3, -2, -5},  {8, -1, 2},   {9, -6, 8},  {-11, 4, 4},
+        {-1, 7, 5},    {-4, 2, 10},   {-10, 2, -8}, {3, -8, 10}, {9, -2, 1},
+        {4, -8, -10},  {3, 10, 8},    {-9, -7, -4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{};
+    constexpr auto res = sat.try_solve(clauses);
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(CompileTimeGen, TrueExample50) {
     constexpr int ClauseNum = 50;
     constexpr int VarsNum = 10;
 
@@ -95,7 +328,7 @@ TEST(GenTest, TrueExample50) {
     EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample50) {
+TEST(CompileTimeGen, FalseExample50) {
     constexpr int ClauseNum = 50;
     constexpr int VarsNum = 10;
 
@@ -118,7 +351,7 @@ TEST(GenTest, FalseExample50) {
     EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample70) {
+TEST(CompileTimeGen, TrueExample70) {
     constexpr int ClauseNum = 70;
     constexpr int VarsNum = 11;
 
@@ -144,7 +377,7 @@ TEST(GenTest, TrueExample70) {
     EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample70) {
+TEST(CompileTimeGen, FalseExample70) {
     constexpr int ClauseNum = 70;
     constexpr int VarsNum = 10;
 
@@ -172,7 +405,7 @@ TEST(GenTest, FalseExample70) {
 
 //! NOTE: Compilation failed due constexpr evaluation hit maximum step limit
 #if 0
-TEST(GenTest, TrueExample100) {
+TEST(CompileTimeGen, TrueExample100) {
     constexpr int ClauseNum = 100;
     constexpr int VarsNum = 20;
 
@@ -210,4 +443,4 @@ TEST(GenTest, TrueExample100) {
     constexpr auto sol = sat.try_solve(clauses);
     EXPECT_TRUE(sol.has_value());
 }
-#endif 
+#endif

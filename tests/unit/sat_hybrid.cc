@@ -30,7 +30,43 @@ TEST(Naive, False) {
     EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample10) {
+TEST(HybridGen, TrueExample5_2) {
+    constexpr int ClauseNum = 5;
+    constexpr int VarsNum = 2;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {-1, -2, 2},
+        {-1, 1, -1},
+        {2, 2, 1},
+        {-2, 1, -1},
+        {-2, 2, -1},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, FalseExample5_2) {
+    constexpr int ClauseNum = 5;
+    constexpr int VarsNum = 2;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {-2, 1, 1},
+        {-1, -2, -1},
+        {1, 2, 2},
+        {-1, 2, -1},
+        {1, 2, 1},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample10) {
     constexpr int ClauseNum = 10;
     constexpr int VarsNum = 4;
 
@@ -53,7 +89,7 @@ TEST(GenTest, TrueExample10) {
     EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample10) {
+TEST(HybridGen, FalseExample10) {
     constexpr int ClauseNum = 10;
     constexpr int VarsNum = 3;
 
@@ -76,7 +112,208 @@ TEST(GenTest, FalseExample10) {
     EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample50) {
+TEST(HybridGen, TrueExample15) {
+    constexpr int ClauseNum = 15;
+    constexpr int VarsNum = 4;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {4, 2, 3},
+        {1, -1, 3},
+        {4, 3, -4},
+        {1, -3, -3},
+        {2, -3, 4},
+        {-4, 1, -2},
+        {2, -3, 4},
+        {4, 2, 4},
+        {2, -4, -2},
+        {3, -3, -2},
+        {4, -4, 1},
+        {-4, -1, 2},
+        {3, -2, -3},
+        {1, 4, 4},
+        {2, -2, 1},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, FalseExample15) {
+    constexpr int ClauseNum = 15;
+    constexpr int VarsNum = 4;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {-3, -2, -3},
+        {-4, 4, -1},
+        {-4, 1, 3},
+        {-4, -1, 3},
+        {1, -3, -3},
+        {4, -4, 4},
+        {-2, -4, -3},
+        {3, 3, -2},
+        {4, -1, -1},
+        {3, 4, 2},
+        {-2, -4, -1},
+        {-3, 4, 3},
+        {2, -1, -1},
+        {-1, 3, 3},
+        {-3, -1, -4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample20) {
+    constexpr int ClauseNum = 20;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {3, 4, -4},   {-4, -2, 3}, {4, -2, 3},  {2, -2, -2}, {2, -5, -3},
+        {-5, -1, 5},  {-3, 3, -5}, {1, 2, 4},   {-5, 2, 1},  {-4, -1, 4},
+        {-4, -1, -2}, {1, 3, 2},   {-2, -1, 5}, {-3, 3, -5}, {-3, 3, 3},
+        {-3, 5, 4},   {-1, -4, 4}, {-2, -3, 5}, {-1, -5, 5}, {-1, -1, 4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, FalseExample20) {
+    constexpr int ClauseNum = 20;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {2, -2, 1},   {-5, 3, 1},   {2, 4, 5},    {-1, 1, -4}, {-4, -4, -4},
+        {3, 3, -1},   {-1, -5, -5}, {4, 5, -1},   {-3, 5, 4},  {1, -2, -5},
+        {-3, -3, -5}, {-1, 1, 5},   {-4, -2, -5}, {3, 4, -2},  {-5, 1, 2},
+        {-5, 2, 1},   {2, -5, -4},  {-1, 3, 1},   {-2, 1, -2}, {-5, 5, -5},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample20_10) {
+    constexpr int ClauseNum = 20;
+    constexpr int VarsNum = 10;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {5, -5, -6}, {4, -2, -8},  {8, -3, -7},  {-5, 2, 3},  {-2, 5, -7},
+        {8, 5, -7},  {-2, -1, 2},  {-7, -5, -3}, {3, 9, -10}, {8, -10, 9},
+        {-3, 7, 7},  {-9, -9, -1}, {8, -8, 9},   {-4, 6, -7}, {-6, 5, -8},
+        {-6, -9, 3}, {9, 1, 6},    {-5, 10, -6}, {-8, 1, 8},  {-6, 8, 5},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample25) {
+    constexpr int ClauseNum = 25;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {2, -4, 1},  {-2, 3, -2}, {-2, -3, 1}, {-2, -4, -1}, {-2, 3, -1},
+        {1, 2, -5},  {1, 4, -5},  {-4, 4, 1},  {3, -2, 1},   {-1, -3, 3},
+        {-2, -2, 2}, {-3, -3, 1}, {5, -4, -1}, {5, -5, -1},  {-4, -1, 4},
+        {-2, 4, 4},  {2, 5, 5},   {4, -2, -2}, {-3, 3, 5},   {-3, -2, 2},
+        {-4, 3, -4}, {3, -4, -4}, {-5, -4, 5}, {3, -3, -2},  {-5, -2, 2},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, FalseExample25) {
+    constexpr int ClauseNum = 25;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {-2, -2, 5},  {-5, 5, 3},   {2, 2, -1}, {-2, 5, -1},  {1, 4, 4},
+        {3, -2, -2},  {-4, 4, 5},   {4, 5, 5},  {1, -1, -2},  {-2, -1, -1},
+        {-4, 4, -2},  {5, 2, -4},   {5, 1, 3},  {-3, -3, -4}, {-2, 4, 1},
+        {-3, -4, -5}, {-3, -2, -5}, {-2, 5, 5}, {-1, -1, 5},  {3, -1, -2},
+        {-3, 3, -3},  {-3, -5, 5},  {1, -2, 1}, {-5, -5, 3},  {-3, -4, -5},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample30) {
+    constexpr int ClauseNum = 30;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {-5, -3, -3}, {-3, -1, -4}, {-1, -2, -4}, {-3, 2, 5},  {-3, -3, -4},
+        {-3, -1, -4}, {-5, 5, -2},  {4, 2, 2},    {3, -4, 4},  {2, -3, -3},
+        {4, -3, -5},  {3, -1, 1},   {2, -1, -1},  {-5, 3, -5}, {1, -3, -1},
+        {1, 1, -5},   {5, -1, -4},  {1, 2, -3},   {-1, 4, 4},  {3, -2, 4},
+        {-4, -3, -4}, {3, -3, -4},  {-5, 4, -4},  {-5, 1, -3}, {3, -1, -3},
+        {-3, 2, 5},   {-1, 3, -2},  {4, -1, -5},  {4, 2, 2},   {3, -1, -4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, FalseExample30) {
+    constexpr int ClauseNum = 30;
+    constexpr int VarsNum = 5;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {-1, -4, 4}, {-2, 5, 5},   {3, -1, 5},   {1, -5, -4},  {1, 1, -5},
+        {1, -1, 2},  {1, 2, -2},   {-3, 2, -1},  {-1, 4, -3},  {3, 2, 1},
+        {3, -5, 5},  {-5, -2, 3},  {-4, -4, -5}, {-5, -3, 4},  {3, 2, -2},
+        {2, -2, 5},  {3, -2, 2},   {-2, 2, 5},   {-2, -4, -2}, {-5, 4, 4},
+        {5, 2, -5},  {-2, -1, -1}, {-2, -1, -3}, {1, -4, 2},   {-5, 4, -3},
+        {5, 5, -4},  {4, -4, 2},   {2, 5, -3},   {1, -2, 2},   {-1, 2, 4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample33_11) {
+    constexpr int ClauseNum = 33;
+    constexpr int VarsNum = 11;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {8, 9, 10},    {-8, -9, 2},   {5, 7, 5},    {-5, 11, 1}, {-11, -1, -9},
+        {10, -11, 7},  {1, -1, -11},  {-7, -8, -6}, {9, 7, 3},   {-4, -4, -1},
+        {2, 6, 2},     {-1, -10, -3}, {-4, 11, -6}, {-5, 6, -3}, {7, 1, 4},
+        {-2, 11, -11}, {10, -7, 9},   {4, -10, -2}, {7, 2, 4},   {6, 8, -10},
+        {6, 9, 9},     {-3, -2, -5},  {8, -1, 2},   {9, -6, 8},  {-11, 4, 4},
+        {-1, 7, 5},    {-4, 2, 10},   {-10, 2, -8}, {3, -8, 10}, {9, -2, 1},
+        {4, -8, -10},  {3, 10, 8},    {-9, -7, -4},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample50) {
     constexpr int ClauseNum = 50;
     constexpr int VarsNum = 10;
 
@@ -99,7 +336,7 @@ TEST(GenTest, TrueExample50) {
     EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample50) {
+TEST(HybridGen, FalseExample50) {
     constexpr int ClauseNum = 50;
     constexpr int VarsNum = 10;
 
@@ -122,7 +359,7 @@ TEST(GenTest, FalseExample50) {
     EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample70) {
+TEST(HybridGen, TrueExample70) {
     constexpr int ClauseNum = 70;
     constexpr int VarsNum = 11;
 
@@ -149,7 +386,7 @@ TEST(GenTest, TrueExample70) {
     EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample70) {
+TEST(HybridGen, FalseExample70) {
     constexpr int ClauseNum = 70;
     constexpr int VarsNum = 10;
 
@@ -176,7 +413,7 @@ TEST(GenTest, FalseExample70) {
     EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample100) {
+TEST(HybridGen, TrueExample100) {
     constexpr int ClauseNum = 100;
     constexpr int VarsNum = 20;
 
@@ -209,12 +446,12 @@ TEST(GenTest, TrueExample100) {
     }};
 
     sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
 
-    const auto sol = sat.try_solve();
-    EXPECT_TRUE(sol.has_value());
+    EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample100) {
+TEST(HybridGen, FalseExample100) {
     constexpr int ClauseNum = 100;
     constexpr int VarsNum = 20;
 
@@ -247,12 +484,92 @@ TEST(GenTest, FalseExample100) {
     }};
 
     sat::SAT<ClauseNum, VarsNum> sat{clauses};
-    const auto sol = sat.try_solve();
+    const auto res = sat.try_solve();
 
-    EXPECT_FALSE(sol.has_value());
+    EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample125) {
+TEST(HybridGen, TrueExample110) {
+    constexpr int ClauseNum = 110;
+    constexpr int VarsNum = 24;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {22, 24, 16},    {-11, 6, -24},  {-15, -13, -6}, {5, 15, -9},
+        {22, -14, 13},   {-21, 2, 16},   {-20, -3, -11}, {-16, 20, 15},
+        {-18, 18, 20},   {8, -22, 24},   {20, -17, -18}, {24, 3, 23},
+        {-24, 16, 13},   {24, -21, -5},  {-14, 17, -9},  {4, 4, -15},
+        {-22, -6, -8},   {23, -6, 11},   {-6, -21, -1},  {-19, -12, -22},
+        {-3, -6, -7},    {-17, -9, 18},  {-17, -7, -5},  {14, 13, 18},
+        {-15, 10, -13},  {20, -18, 9},   {12, 10, 2},    {-2, -24, 17},
+        {7, -23, 6},     {21, 17, -14},  {1, -14, -2},   {12, 18, 8},
+        {24, 12, -10},   {4, -18, -10},  {16, -6, 20},   {9, 3, -16},
+        {11, 22, 17},    {2, 23, -4},    {16, -3, -17},  {2, -15, -20},
+        {19, 4, -20},    {-19, -19, -9}, {19, 18, 5},    {-9, 5, 19},
+        {4, 17, 1},      {-19, -5, 1},   {-2, -15, -20}, {8, -18, -23},
+        {17, -16, 8},    {-5, -4, -13},  {-3, -1, -14},  {17, 5, -22},
+        {7, -17, 13},    {7, 16, 18},    {20, 5, -11},   {-22, -10, -11},
+        {21, -5, -24},   {23, -19, -14}, {-23, -18, 8},  {-8, -18, 16},
+        {13, -16, -14},  {-19, -15, -9}, {21, 5, 20},    {16, -15, 18},
+        {13, 3, 5},      {-15, -21, 21}, {-1, 17, -11},  {10, 7, -11},
+        {-21, -11, -11}, {-22, -21, 7},  {2, 11, -12},   {-12, -16, -14},
+        {-16, -23, 22},  {-6, -7, 5},    {-20, -24, 7},  {4, -20, -12},
+        {21, 21, -11},   {20, -14, -6},  {-7, 9, 13},    {10, -12, -11},
+        {-12, 5, -24},   {-7, 10, -8},   {-5, 7, 14},    {18, -13, -2},
+        {7, -5, -21},    {24, 4, -16},   {-22, 20, -17}, {-21, 9, -6},
+        {-5, 12, 5},     {-17, -8, -16}, {2, 7, 7},      {-23, -20, 2},
+        {24, -14, 8},    {24, -17, -7},  {-4, -21, -3},  {-11, 13, 20},
+        {15, -1, 7},     {16, -8, -15},  {-8, 23, -1},   {-21, 24, 18},
+        {-1, 10, -1},    {2, 11, 8},     {4, -21, -17},  {8, -16, 20},
+        {-8, 4, 11},     {14, -17, -6},  {-3, 24, -20},  {6, 13, 20},
+        {-10, 1, 12},    {-17, 11, 24},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+    EXPECT_TRUE(res.has_value());
+}
+
+TEST(HybridGen, FalseExample110) {
+    constexpr int ClauseNum = 110;
+    constexpr int VarsNum = 24;
+
+    constexpr std::array<sat::Clause, ClauseNum> clauses = {{
+        {-6, -23, -4},   {-20, -7, 23},   {-3, -16, -9},  {-15, -7, -18},
+        {17, -11, -14},  {-15, -3, -5},   {17, 16, 12},   {-11, 2, 8},
+        {-6, -23, -21},  {12, -11, 2},    {15, 6, -20},   {-23, -9, -15},
+        {17, -13, 19},   {-13, 16, -3},   {-10, 11, 7},   {22, -24, -23},
+        {-19, 21, 4},    {20, -14, -5},   {-13, 15, 24},  {24, 10, -3},
+        {-1, 1, 22},     {10, 24, -16},   {-14, 15, -7},  {-6, -15, -19},
+        {-6, 8, -24},    {-24, 4, 13},    {7, -1, 9},     {-14, -15, -4},
+        {20, 18, 12},    {9, 18, -12},    {-8, 10, -21},  {3, 23, -8},
+        {-14, 14, -4},   {1, -10, 21},    {12, 19, 9},    {8, -14, -13},
+        {1, 10, 21},     {-14, -18, -21}, {-2, -23, -21}, {1, 14, 21},
+        {-4, 17, 6},     {6, -9, 11},     {15, 2, -12},   {7, 8, 19},
+        {17, 7, -21},    {-20, -21, 13},  {-12, 9, 23},   {-20, 11, -18},
+        {-6, -5, -6},    {11, -4, -2},    {10, 1, -5},    {-20, -1, -13},
+        {-14, 1, 3},     {7, 21, -6},     {-20, -1, 3},   {19, 16, -20},
+        {8, 24, 18},     {7, -7, 16},     {20, 11, -17},  {-20, 20, 16},
+        {17, -2, -7},    {22, 22, -21},   {-3, 9, -19},   {18, -22, 18},
+        {23, -5, -16},   {17, -24, -22},  {2, -18, -20},  {22, 19, -12},
+        {-18, -13, -14}, {-13, 18, 1},    {-1, 10, 3},    {-5, 4, -16},
+        {11, -4, 14},    {9, 1, -2},      {-5, 18, 24},   {11, 10, 1},
+        {-10, 24, -18},  {-17, 5, -20},   {6, 23, -10},   {5, 6, 10},
+        {-1, 9, 3},      {-15, 10, 20},   {-20, -16, 14}, {3, 18, 18},
+        {22, -9, 20},    {-23, -11, 22},  {-4, -15, 8},   {15, 9, -1},
+        {9, 21, 11},     {2, -24, 17},    {13, 13, 19},   {-14, 13, -1},
+        {9, -7, -21},    {-13, -1, 4},    {13, -13, 24},  {-2, -23, -18},
+        {11, -1, 11},    {-3, 4, -5},     {-15, -10, 21}, {-15, 7, 10},
+        {12, 18, -24},   {8, -11, -6},    {-9, 13, -6},   {-15, 23, -7},
+        {-11, 6, 23},    {-11, -15, 24},  {-16, -6, 16},  {8, 22, -24},
+        {-10, 3, -5},    {-15, -24, -12},
+    }};
+
+    sat::SAT<ClauseNum, VarsNum> sat{clauses};
+    const auto res = sat.try_solve();
+    EXPECT_FALSE(res.has_value());
+}
+
+TEST(HybridGen, TrueExample125) {
     constexpr int ClauseNum = 125;
     constexpr int VarsNum = 25;
 
@@ -290,12 +607,13 @@ TEST(GenTest, TrueExample125) {
         {-7, -23, 12},   {16, 15, -22},   {-23, 16, -1},  {21, 20, 3},
         {-7, 17, -14},
     }};
+
     sat::SAT<ClauseNum, VarsNum> sat{clauses};
-    const auto sol = sat.try_solve();
-    EXPECT_TRUE(sol.has_value());
+    const auto res = sat.try_solve();
+    EXPECT_TRUE(res.has_value());
 }
 
-TEST(GenTest, FalseExample125) {
+TEST(HybridGen, FalseExample125) {
     constexpr int ClauseNum = 125;
     constexpr int VarsNum = 25;
 
@@ -335,11 +653,11 @@ TEST(GenTest, FalseExample125) {
     }};
 
     sat::SAT<ClauseNum, VarsNum> sat{clauses};
-    const auto sol = sat.try_solve();
-    EXPECT_FALSE(sol.has_value());
+    const auto res = sat.try_solve();
+    EXPECT_FALSE(res.has_value());
 }
 
-TEST(GenTest, TrueExample150) {
+TEST(HybridGen, TrueExample150) {
     constexpr int ClauseNum = 150;
     constexpr int VarsNum = 27;
 
@@ -384,6 +702,6 @@ TEST(GenTest, TrueExample150) {
         {-10, -7, -6},   {-10, -20, -27},
     }};
     sat::SAT<ClauseNum, VarsNum> sat{clauses};
-    const auto sol = sat.try_solve();
-    EXPECT_TRUE(sol.has_value());
+    const auto res = sat.try_solve();
+    EXPECT_TRUE(res.has_value());
 }

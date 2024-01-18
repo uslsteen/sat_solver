@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(GTest REQUIRED)
 
+# Naive & lazy way to collect list of test targets
 set(TESTLIST sat_runtime 
              sat_compile_time
              sat_hybrid)
