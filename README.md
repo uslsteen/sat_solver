@@ -52,3 +52,11 @@ cd build/
 ```
 
 Additionally suggest set varialbe ```CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS```
+
+## Tests
+
+- Run Unit Tests
+
+```bash
+ctest -C ${BUILD_TYPE} -VV -j ${JOBS} -L unit
+```
